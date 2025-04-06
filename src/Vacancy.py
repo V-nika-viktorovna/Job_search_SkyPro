@@ -7,6 +7,8 @@ class Vacancy():
     Содердит методы сравнения вакансий между собой по зарплате и валидирует данные,
     которыми инициализируются его атрибуты."""
 
+    __slots__ = ('job_title', 'link_to_vacancy', 'salary', 'requirements')
+
     job_title: str
     link_to_vacancy: str
     salary: str
@@ -16,9 +18,31 @@ class Vacancy():
         self.job_title = job_title
         self.link_to_vacancy = link_to_vacancy
         self.salary = salary
-        self.requirements = requirements
+        self.requirements = Vacancy.__valid_requirements(requirements)
 
     def __str__(self):
+        result_str = f"'job_title': {self.job_title},\
+ 'link_to_vacancy': {self.link_to_vacancy},\
+ 'salary': {self.salary},\
+ 'requirements': {self.requirements}\
+ "
+        return result_str
+
+    def __lt__(self, other):
+        vacancy_salary = int(self.salary.split(" ")[0])
+        other_salary = int(other.salary.split(" ")[0])
+        return vacancy_salary < other_salary
+
+    def __eq__(self, other):
+        return self.link_to_vacancy == other.link_to_vacancy
+
+    def __valid_requirements(requirements):
+        if requirements is None:
+            return 'Описание отсутствует'
+        return requirements
+
+    def to_dict(self):
+        """Метод для представления данных о вакансии в словаре"""
 
         result_dict = {
             'job_title': self.job_title,
@@ -27,7 +51,7 @@ class Vacancy():
             'requirements': self.requirements
         }
 
-        return str(result_dict)
+        return result_dict
 
     @classmethod
     def cast_to_object_list(cls, file_json: str) -> list:
@@ -47,7 +71,7 @@ class Vacancy():
                 job_title = vacancy_dict.get('name')
                 link_to_vacancy = vacancy_dict.get('alternate_url')
 
-                if vacancy_dict.get('salary') is None:
+                if vacancy_dict.get('salary') is None:  # Валидация данных в ключе 'salary'
                     salary_from = None
                     salary_to = None
                     salary_currency = ''
@@ -72,14 +96,8 @@ class Vacancy():
                 elif salary_from is not None and salary_to is None:
                     salary = f'{salary_from} {salary_currency}'
                 else:
-                    salary = 'Зарплата не указана'
+                    salary = "0"
 
-                # result_dict = {
-                #     'job_title': job_title,
-                #     'link_to_vacancy_from': link_to_vacancy_from,
-                #     'salary': salary,
-                #     'requirements': requirements
-                # }
                 vacancys_obj = cls(job_title, link_to_vacancy, salary, requirements)
                 vacancys_list.append(vacancys_obj)
 
@@ -88,14 +106,16 @@ class Vacancy():
 
 
 if __name__ == '__main__':
+
     CURRENT_DIR = os.path.dirname(__file__)
     DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
     json_file = os.path.join(DATA_DIR, 'vacancies.json')
 
-    a = Vacancy.cast_to_object_list(json_file)
+    test_1 = Vacancy.cast_to_object_list(json_file)
 
-    for obj in a:
+    for obj in test_1:
         print(obj)
+        print(obj.to_dict())
         print(obj.job_title)
         print(obj.link_to_vacancy)
         print(obj.salary)

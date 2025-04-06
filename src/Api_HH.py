@@ -1,5 +1,6 @@
 import json
 import os.path
+from typing import Any
 
 import requests
 
@@ -15,15 +16,18 @@ class ApiHH(ApiAbc):
     заданных для поиска."""
 
     def __init__(self):
-        self.url_get = "https://api.hh.ru"
+        self.__url_get = "https://api.hh.ru"
 
     def hh_get_city(self, name_region: str, name_city: str) -> int:
         """Метод возвращает номер региона(города) для поиска вакансий,
         определенных в справочнике:
         https://api.hh.ru/openapi/redoc#tag/Obshie-spravochniki/operation/get-areas"""
 
+        name_region = name_region.lower()
+        name_city = name_city.lower()
+
         try:
-            response = requests.get(self.url_get + "/areas")
+            response = requests.get(self.__url_get + "/areas")
         except Exception as e:
             print(f'Ошибка при подключении: {e}')
             return 0
@@ -31,14 +35,23 @@ class ApiHH(ApiAbc):
             try:
                 result = response.json()
 
-                id_region = 0
                 for dicts in result[0].get("areas"):
-                    if dicts.get("name") == name_region:
+                    if dicts.get("name").lower() == name_region:
+
                         id_region = dicts.get("id")
 
-                    for dict_region in dicts.get("areas"):
-                        if dict_region.get("parent_id") == id_region and dict_region.get("name") == name_city:
-                            return int(dict_region.get("id"))
+                        if int(id_region) == 1:
+                            return 1
+                        else:
+                            for dict_region in dicts.get("areas"):
+
+                                get_name_city = dict_region.get("name").lower()
+
+                                if '(' in dict_region.get("name"):
+                                    get_name_city = dict_region.get("name").split('(')[0].split(' ')[0].lower()
+
+                                if dict_region.get("parent_id") == id_region and get_name_city == name_city:
+                                    return int(dict_region.get("id"))
 
             except Exception as e:
                 if response.status_code != 200:
@@ -48,29 +61,42 @@ class ApiHH(ApiAbc):
                     print(f'Ошибка: {e}')
                     return 0
 
-    def hh_vacancies(self, get_city: int):
+    def hh_vacancies(self, text: str, get_city: int) -> Any:
         """Метод записывает полученные данные о вакансиях в json файл"""
 
-        json_file = os.path.join(DATA_DIR, 'vacancies.json')
-        try:
-            response = requests.get(self.url_get + f'/vacancies?area={get_city}')  # отправка GET-запроса
+        text.lower()
 
-        except Exception as e:
-            with open(json_file, 'w+', encoding='UTF-8') as f:
-                print(f'Ошибка при подключении: {e}')
-                f.write(f'Ошибка при подключении: {e}')
+        while get_city is None or get_city == 0:
+            return 'Не введен регион для поиска вакансий'
+
         else:
-            data = response.json()
-            if response.status_code == 200:
+            json_file = os.path.join(DATA_DIR, 'vacancies.json')
+            params = {
+                'text': text,
+                'area': get_city,
+                'page': 0,
+                'per_page': 100
+            }
+
+            try:
+                response = requests.get(self.__url_get + '/vacancies', params=params)
+            except Exception as e:
                 with open(json_file, 'w+', encoding='UTF-8') as f:
-                    json.dump(response.json(), f, indent=4)
+                    print(f'Ошибка при подключении: {e}')
+                    f.write(f'Ошибка при подключении: {e}')
             else:
-                print(f'Код ошибки: {response.status_code}')
-            return data
+                data = response.json()
+                if response.status_code == 200:
+                    with open(json_file, 'w+', encoding='UTF-8') as f:
+                        json.dump(response.json(), f, indent=4)
+                else:
+                    print(f'Код ошибки: {response.status_code}')
+                return data
 
 
 if __name__ == '__main__':
 
-    test_data = ApiHH().hh_get_city('Краснодарский край', 'Новороссийск')
-    test = ApiHH().hh_vacancies(1454)
+    test_data = ApiHH().hh_get_city('краснодарский край', 'новороссийск')
+    print(test_data)
+    test = ApiHH().hh_vacancies('МенеджЕР по продажам', get_city=test_data)
     print(test)
