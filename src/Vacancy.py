@@ -41,6 +41,8 @@ class Vacancy():
         return self.link_to_vacancy == other.link_to_vacancy
 
     def __valid_requirements(requirements):
+        """Метод валидации для атрибута requirements"""
+
         if requirements is None:
             return 'Описание отсутствует'
         return requirements

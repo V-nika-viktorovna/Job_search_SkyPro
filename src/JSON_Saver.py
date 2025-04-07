@@ -84,7 +84,6 @@ class JSONSaver(ABCJSONSaver):
 
         for vacancys_dict in vacancys_list:
             if filter_words != '':
-                #vacancys_dict = eval(vacancys_str)
                 if filter_words in vacancys_dict.get('requirements').lower():
                     filter_words_vacancies_list.append(vacancys_dict)
             else:
@@ -94,25 +93,40 @@ class JSONSaver(ABCJSONSaver):
 
         if len(filter_words_vacancies_list) == 0:
             for vacancys_dict in vacancys_list:
-                #vacancys_dict = eval(vacancys_str)
                 if int(vacancys_dict.get('salary').split(' ')[0]) >= salary_range:
                     filter_salary_vacancies_list.append(vacancys_dict)
         else:
             for filter_vacancies_dict in filter_words_vacancies_list:
-                if int(filter_vacancies_dict.get('salary').split(' ')[0]) >= salary_range:
-                    filter_salary_vacancies_list.append(filter_vacancies_dict)
+                if salary_range == 0:
+                    break
+                else:
+                    if int(filter_vacancies_dict.get('salary').split(' ')[0]) >= salary_range:
+                        filter_salary_vacancies_list.append(filter_vacancies_dict)
 
         result_vacancies_list = []
 
         if top_n > 0:
-            for salary_vacancies_dict in filter_salary_vacancies_list:
-                if top_n > 0:
-                    result_vacancies_list.append(salary_vacancies_dict)
-                    top_n -= 1
-                else:
-                    break
+            if len(filter_salary_vacancies_list):
+                for salary_vacancies_dict in filter_salary_vacancies_list:
+                    if top_n > 0:
+                        result_vacancies_list.append(salary_vacancies_dict)
+                        top_n -= 1
+                    else:
+                        break
+
+            else:
+                for filter_words_vacancies_dict in filter_words_vacancies_list:
+                    if top_n > 0:
+                        result_vacancies_list.append(filter_words_vacancies_dict)
+                        top_n -= 1
+                    else:
+                        break
+
         else:
-            result_vacancies_list = filter_salary_vacancies_list
+            if len(filter_salary_vacancies_list) > 0:
+                result_vacancies_list = filter_salary_vacancies_list
+            else:
+                return filter_words_vacancies_list
 
         return result_vacancies_list
 

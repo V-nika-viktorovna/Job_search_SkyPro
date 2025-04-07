@@ -2,6 +2,7 @@ import os.path
 
 from src.Api_HH import ApiHH
 from src.JSON_Saver import JSONSaver
+from src.utils import create_vacansy_list_file
 from src.Vacancy import Vacancy
 
 CURRENT_DIR = os.path.dirname(__file__)
@@ -63,7 +64,7 @@ def user_interaction():
         return
 
     if next_action == 1:
-        user_vacancy = Vacancy.cast_to_object_list(json_file)
+        user_vacancy = create_vacansy_list_file(json_file)
         for vacancy in user_vacancy:
             json_saver.add_vacancy(vacancy)
             print(f'{vacancy}\n______________________________________________')
@@ -88,7 +89,7 @@ def user_interaction():
                 return
 
             else:
-                user_salary_filter = json_saver.filter_vacancies(salary_range=user_salary, top_n=ton_n)
+                user_salary_filter = create_vacansy_list_file(json_file, salary_range=user_salary, top_n=ton_n)
                 for vacancy_filter in user_salary_filter:
                     vacancy_str = Vacancy(**vacancy_filter)
                     print(f'{vacancy_str}\n______________________________________________')
@@ -104,7 +105,7 @@ def user_interaction():
                 return
 
             else:
-                user_salary_filter = json_saver.filter_vacancies(filter_words=user_filter_words, top_n=ton_n)
+                user_salary_filter = create_vacansy_list_file(json_file, filter_words=user_filter_words, top_n=ton_n)
                 for vacancy_filter in user_salary_filter:
                     vacancy_str = Vacancy(**vacancy_filter)
                     print(f'{vacancy_str}\n______________________________________________')
@@ -121,8 +122,8 @@ def user_interaction():
                 return
 
             else:
-                user_salary_filter = json_saver.filter_vacancies(filter_words=user_filter_words,
-                                                                 salary_range=user_salary,  top_n=ton_n)
+                user_salary_filter = create_vacansy_list_file(json_file, filter_words=user_filter_words,
+                                                              salary_range=user_salary, top_n=ton_n)
                 for vacancy_filter in user_salary_filter:
                     vacancy_str = Vacancy(**vacancy_filter)
                     print(f'{vacancy_str}\n______________________________________________')

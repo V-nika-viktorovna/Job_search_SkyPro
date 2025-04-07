@@ -1,5 +1,7 @@
 import pytest
 
+from src.Vacancy import Vacancy
+
 
 @pytest.fixture
 def area():
@@ -28,3 +30,21 @@ def area():
 def vacancies2():
     vacancies = {"Тест прошел успешно!": "ok"}
     return vacancies
+
+
+@pytest.fixture
+def vacancy_obj():
+    vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>",
+                      "1000000 - 1500000 руб.", "Требования: опыт работы Python от 3 лет...")
+    return vacancy
+
+
+@pytest.fixture
+def vacancy_list_obj():
+    vacancy_1 = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>",
+                        "90 000-100 000 руб.", "Требования: опыт работы от 3 лет...")
+    vacancy_2 = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>",
+                        "110 000-150 000 руб.", "Требования: опыт работы от 3 лет...")
+    vacancy_list = [vacancy_1]
+    vacancy_list.append(vacancy_2)
+    return vacancy_list
