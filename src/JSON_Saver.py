@@ -9,7 +9,7 @@ DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
 
 
 class JSONSaver(ABCJSONSaver):
-    """Класс для сохранения информации о вакансиях в JSON-файл."""
+    """Класс для сохранения, удаления и получения данных информации о вакансиях в JSON-файл и из него."""
 
     CURRENT_DIR = os.path.dirname(__file__)
     DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
@@ -18,6 +18,8 @@ class JSONSaver(ABCJSONSaver):
         self.__name_file = os.path.join(DATA_DIR, 'vacancy.json')
 
     def add_vacancy(self, vacancy='') -> None:
+        """Метод для добавления вакансий в файл"""
+
         if isinstance(vacancy, Vacancy):
             vacancy = vacancy.to_dict()
 
@@ -50,7 +52,8 @@ class JSONSaver(ABCJSONSaver):
         else:
             print('Объект не является экземпляром класса Vacancy и не может быть добавлен')
 
-    def delete_vacancy(self, vacancy=''):
+    def delete_vacancy(self, vacancy='') -> None:
+        """Метод для удаления информации о вакансиях"""
 
         if isinstance(vacancy, Vacancy):
 
@@ -74,7 +77,8 @@ class JSONSaver(ABCJSONSaver):
         else:
             print('Объект не является экземпляром класса Vacancy и не может удален')
 
-    def filter_vacancies(self, filter_words='', salary_range=0, top_n=0):
+    def filter_vacancies(self, filter_words='', salary_range=0, top_n=0) -> list:
+        """ Метод получения данных из файла по указанным критериям"""
 
         with open(self.__name_file, 'r+', encoding='UTF-8') as f:
             vacancys_list = json.load(f)

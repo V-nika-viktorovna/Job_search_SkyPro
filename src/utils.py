@@ -39,5 +39,3 @@ if __name__ == '__main__':
     json_file = os.path.join(DATA_DIR, 'vacancies.json')
 
     test_list = create_vacansy_list_file(json_file, 'продаж', 100000, 6)
-    # test_sorted = sorted_vacancy(test_list)
-    # print(test_sorted)
