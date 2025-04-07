@@ -21,10 +21,14 @@ class Vacancy():
         self.requirements = Vacancy.__valid_requirements(requirements)
 
     def __str__(self):
-        result_str = f"'job_title': {self.job_title},\
- 'link_to_vacancy': {self.link_to_vacancy},\
- 'salary': {self.salary},\
- 'requirements': {self.requirements}\
+
+        if self.salary == 0:
+            self.salary == 'Зарплата не указана'
+
+        result_str = f"'Название': {self.job_title},\
+ \n'Ссылка на вакансию': {self.link_to_vacancy},\
+ \n'Зарплата': {self.salary},\
+ \n'Описание': {self.requirements}\
  "
         return result_str
 

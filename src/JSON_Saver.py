@@ -11,22 +11,23 @@ DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
 class JSONSaver(ABCJSONSaver):
     """Класс для сохранения информации о вакансиях в JSON-файл."""
 
+    CURRENT_DIR = os.path.dirname(__file__)
+    DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
+
     def __init__(self):
-        self.__name_file = 'vacancy.json'
+        self.__name_file = os.path.join(DATA_DIR, 'vacancy.json')
 
     def add_vacancy(self, vacancy='') -> None:
         if isinstance(vacancy, Vacancy):
             vacancy = vacancy.to_dict()
 
-            json_file = os.path.join(DATA_DIR, self.__name_file)
-
-            with open(json_file, 'r+', encoding='UTF-8') as f:
+            with open(self.__name_file, 'r+', encoding='UTF-8') as f:
                 data = f.read()
 
             if not data:
                 data = []
                 data.append(vacancy)
-                with open(json_file, 'w+', encoding='UTF-8') as f:
+                with open(self.__name_file, 'w+', encoding='UTF-8') as f:
                     json.dump(data, f, indent=4)
                     print('Вакансия успешно добавлена')
 
@@ -42,7 +43,7 @@ class JSONSaver(ABCJSONSaver):
 
                 if not append_flag:
                     vacancys_list.append(vacancy)
-                    with open(json_file, 'w+', encoding='UTF-8') as f:
+                    with open(self.__name_file, 'w+', encoding='UTF-8') as f:
                         json.dump(vacancys_list, f, indent=4)
                     print('Вакансия успешно добавлена')
 
@@ -53,9 +54,7 @@ class JSONSaver(ABCJSONSaver):
 
         if isinstance(vacancy, Vacancy):
 
-            json_file = os.path.join(DATA_DIR, self.__name_file)
-
-            with open(json_file, 'r+', encoding='UTF-8') as f:
+            with open(self.__name_file, 'r+', encoding='UTF-8') as f:
                 vacancys_list = json.load(f)
 
             checking_delete = 0
@@ -64,7 +63,7 @@ class JSONSaver(ABCJSONSaver):
                 if vacancy_dict == vacancy.to_dict():
                     vacancys_list.remove(vacancy.to_dict())
 
-                    with open(json_file, 'w+', encoding='UTF-8') as f:
+                    with open(self.__name_file, 'w+', encoding='UTF-8') as f:
                         f.truncate(0)
                         json.dump(vacancys_list, f, indent=4)
                         print('Вакансия успешно удалена')
@@ -77,9 +76,7 @@ class JSONSaver(ABCJSONSaver):
 
     def filter_vacancies(self, filter_words='', salary_range=0, top_n=0):
 
-        json_file = os.path.join(DATA_DIR, self.__name_file)
-
-        with open(json_file, 'r+', encoding='UTF-8') as f:
+        with open(self.__name_file, 'r+', encoding='UTF-8') as f:
             vacancys_list = json.load(f)
 
         filter_words = filter_words.lower()

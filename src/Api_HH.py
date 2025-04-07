@@ -67,7 +67,8 @@ class ApiHH(ApiAbc):
         text.lower()
 
         while get_city is None or get_city == 0:
-            return 'Не введен регион для поиска вакансий'
+            print('Не введен регион для поиска вакансий')
+            return 0
 
         else:
             json_file = os.path.join(DATA_DIR, 'vacancies.json')
