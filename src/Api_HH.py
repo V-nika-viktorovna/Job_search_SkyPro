@@ -81,18 +81,20 @@ class ApiHH(ApiAbc):
 
             try:
                 response = requests.get(self.__url_get + '/vacancies', params=params)
+
             except Exception as e:
                 with open(json_file, 'w+', encoding='UTF-8') as f:
                     print(f'Ошибка при подключении: {e}')
                     f.write(f'Ошибка при подключении: {e}')
             else:
                 data = response.json()
+                result_data = data.get('items')
                 if response.status_code == 200:
                     with open(json_file, 'w+', encoding='UTF-8') as f:
-                        json.dump(response.json(), f, indent=4)
+                        json.dump(result_data, f, indent=4)
                 else:
                     print(f'Код ошибки: {response.status_code}')
-                return data
+                return result_data
 
 
 if __name__ == '__main__':

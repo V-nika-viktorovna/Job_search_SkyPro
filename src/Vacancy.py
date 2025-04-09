@@ -73,7 +73,7 @@ class Vacancy():
             print(f'Файл не прочитан. Ошибка: {e}')
 
         else:
-            for vacancy_dict in vacancys_data.get('items'):
+            for vacancy_dict in vacancys_data:
                 job_title = vacancy_dict.get('name')
                 link_to_vacancy = vacancy_dict.get('alternate_url')
 

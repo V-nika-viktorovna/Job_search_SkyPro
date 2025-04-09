@@ -43,7 +43,6 @@ def user_interaction():
 
     region = get_region_city.split(',')[0]
     city = get_region_city.split(',')[1].split(' ')[1]
-    print(f',{region},,{city},')
 
     get_user_city = hh_api.hh_get_city(region, city)
     if get_user_city == 0:
