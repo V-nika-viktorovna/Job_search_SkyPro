@@ -15,8 +15,8 @@ class JSONSaver(ABCJSONSaver):
     DATA_DIR = os.path.join(CURRENT_DIR, '..', 'data')
     name_file = os.path.join(DATA_DIR, 'vacancy.json')
 
-    def __init__(self):
-        self.__name_file = self.__class__.name_file
+    def __init__(self, name_file=os.path.join(DATA_DIR, 'vacancy.json')):
+        self.__name_file = name_file
 
     def add_vacancy(self, vacancy='') -> None:
         """Метод для добавления вакансий в файл"""
